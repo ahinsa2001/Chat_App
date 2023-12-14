@@ -22,7 +22,22 @@
 
         .title {
             color: #5d5b8d;
+            font-size: 20px;
+            font-weight: 300;
+        }
+
+        label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: #8da4f1;
             font-size: 12px;
+            cursor: pointer;
+
+            img {
+                width: 60px;
+            }
         }
 
         form {
@@ -31,7 +46,7 @@
             gap: 15px;   
             
             input {
-                padding: 15px;
+                padding: 10px;
                 border: none;
                 width: 250px;
                 border-bottom: 1px solid #a7bcff;
@@ -48,19 +63,7 @@
                 font-weight: bold;
                 border: none;
                 cursor: pointer;
-            }
-
-            label {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                color: #8da4f1;
-                font-size: 12px;
-                cursor: pointer;
-
-                img {
-                    width: 32px;
-                }
+                margin-top: 20px;
             }
 
         }
@@ -68,7 +71,7 @@
         p {
             color: #5d5b8d;
             font-size: 12px;
-            margin-top: 10px;
+            margin-top: 3px;
         }
     }
 }
