@@ -24,7 +24,7 @@ export const Register = () => {
       uploadTask.on(
         (error) => {
           setErr(true);
-        },
+        }, 
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
 
@@ -41,8 +41,7 @@ export const Register = () => {
             });
 
           });
-        },
-        
+        }
       );
       
  
