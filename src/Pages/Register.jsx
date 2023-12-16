@@ -1,42 +1,71 @@
 import React, { useState } from 'react'
 import Add from "../img/addUser.png"
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth, db, storage } from "../firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore"; 
 
 export const Register = () => {
-  const [err,setErr] = useState(false)
+  const [err,setErr] = useState(false);
 
   const handleSubmit = async (e)=>{
-    e.preventDefault()
-    const enterName = e.target[0].value;
-    const email = e.target[1].value;
-    const password = e.target[2].value;
-    const file = e.target[3].file[0];
+    e.preventDefault();
+    const file = e.target[0].files[0];
+    const displayName = e.target[1].value;
+    const email = e.target[2].value;
+    const password = e.target[3].value;
+    
+    try{ 
+      const res = await createUserWithEmailAndPassword(auth, email, password);
 
-    try{
-      const res = await createUserWithEmailAndPassword(auth, email, password)
+      const storageRef = ref(storage, displayName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        (error) => {
+          setErr(true);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
+
+            await updateProfile (res.user,{
+              displayName,
+              photoURL: downloadURL,
+            });
+
+            await setDoc (doc(db, "users", res.user.uid),{
+              uid: res.user.uid,
+              displayName,
+              email,
+              photoURL: downloadURL,
+            });
+
+          });
+        },
+        
+      );
+      
  
     }catch(err){
       setErr(true);
     }
     
-  }
+  };
 
   return (
     <div className='formContainer'>
         <div className="formWrapper">
             <span className='logo'>MEAN Chat App</span>
             <span className="title">Register</span>
-            <hr/>
             <form onSubmit={handleSubmit}>
                 <input style={{display:"none"}} type="file" id='file'/>
                 <label htmlFor='file'>
                     <img src={Add} alt='' />
                     <span>Add Profile Picture</span>
                 </label>
-                <input type="text" placeholder='Enter Name' />
-                <input type="email" placeholder='Enter Email' />
-                <input type="password" placeholder='Enter Password' />
+                <input type="text" placeholder='Enter name' />
+                <input type="email" placeholder='Enter email' />
+                <input type="password" placeholder='Enter password' />
                 <button>Sign up</button>
                 {err && <span>Something went wrong</span>}
             </form>
